@@ -1,8 +1,31 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf"; // Import jsPDF for PDF generation
 import Papa from "papaparse"; // For CSV parsing
+import React, { useState, useEffect } from 'react';
 
 const Payouts = () => {
+  const [data, setData] = useState([]);
+
+  // Load data from local storage when the component mounts
+  useEffect(() => {
+    const savedData = JSON.parse(localStorage.getItem('payoutData')) || [
+      { author: 'John', articles: 5, rate: 100 },
+      { author: 'Jane', articles: 7, rate: 120 },
+    ];
+    setData(savedData);
+  }, []);
+  
+  const handleRateChange = (idx, newRate) => {
+    const updatedData = [...data];
+    updatedData[idx].rate = newRate;
+    setData(updatedData);
+  
+    // Save updated data to local storage
+    localStorage.setItem('payoutData', JSON.stringify(updatedData));
+  };
+  
+
+  const Payouts = () => {
   const [data, setData] = useState([
     { author: "John", articles: 5, rate: 100 },
     { author: "Jane", articles: 7, rate: 120 },
