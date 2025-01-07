@@ -1,40 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { jsPDF } from "jspdf"; // Import jsPDF for PDF generation
+import "jspdf-autotable"; // Import for autoTable support
 import Papa from "papaparse"; // For CSV parsing
-import React, { useState, useEffect } from 'react';
 
 const Payouts = () => {
   const [data, setData] = useState([]);
 
   // Load data from local storage when the component mounts
   useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem('payoutData')) || [
-      { author: 'John', articles: 5, rate: 100 },
-      { author: 'Jane', articles: 7, rate: 120 },
+    const savedData = JSON.parse(localStorage.getItem("payoutData")) || [
+      { author: "John", articles: 5, rate: 100 },
+      { author: "Jane", articles: 7, rate: 120 },
     ];
     setData(savedData);
   }, []);
-  
+
   const handleRateChange = (idx, newRate) => {
     const updatedData = [...data];
     updatedData[idx].rate = newRate;
     setData(updatedData);
-  
+
     // Save updated data to local storage
-    localStorage.setItem('payoutData', JSON.stringify(updatedData));
-  };
-  
-
-  const Payouts = () => {
-  const [data, setData] = useState([
-    { author: "John", articles: 5, rate: 100 },
-    { author: "Jane", articles: 7, rate: 120 },
-  ]);
-
-  const handleRateChange = (idx, newRate) => {
-    const updatedData = [...data];
-    updatedData[idx].rate = newRate;
-    setData(updatedData);
+    localStorage.setItem("payoutData", JSON.stringify(updatedData));
   };
 
   // Function to export data as PDF
@@ -45,7 +32,7 @@ const Payouts = () => {
     doc.setFontSize(18);
     doc.text("Payout Details", 10, 10);
 
-    // Table Header
+    // Table Header and Rows
     const tableColumns = ["Author", "Articles", "Payout Rate"];
     const tableRows = data.map((row) => [row.author, row.articles, row.rate]);
 
@@ -77,25 +64,26 @@ const Payouts = () => {
 
   return (
     <div className="p-5">
-      <h1 className="text-2xl font-bold">Payout Details</h1>
-      <table className="table-auto w-full">
+      <h1 className="text-2xl font-bold mb-4">Payout Details</h1>
+      <table className="table-auto w-full border-collapse border border-gray-300">
         <thead>
           <tr>
-            <th>Author</th>
-            <th>Articles</th>
-            <th>Payout Rate</th>
+            <th className="border border-gray-300 px-4 py-2">Author</th>
+            <th className="border border-gray-300 px-4 py-2">Articles</th>
+            <th className="border border-gray-300 px-4 py-2">Payout Rate</th>
           </tr>
         </thead>
         <tbody>
           {data.map((row, idx) => (
             <tr key={idx}>
-              <td>{row.author}</td>
-              <td>{row.articles}</td>
-              <td>
+              <td className="border border-gray-300 px-4 py-2">{row.author}</td>
+              <td className="border border-gray-300 px-4 py-2">{row.articles}</td>
+              <td className="border border-gray-300 px-4 py-2">
                 <input
                   type="number"
                   value={row.rate}
                   onChange={(e) => handleRateChange(idx, Number(e.target.value))}
+                  className="border border-gray-300 rounded px-2 py-1 w-full"
                 />
               </td>
             </tr>
@@ -107,13 +95,13 @@ const Payouts = () => {
       <div className="mt-5 space-x-3">
         <button
           onClick={exportToPDF}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Export to PDF
         </button>
         <button
           onClick={exportToCSV}
-          className="bg-green-500 text-white px-4 py-2 rounded"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
         >
           Export to CSV
         </button>
